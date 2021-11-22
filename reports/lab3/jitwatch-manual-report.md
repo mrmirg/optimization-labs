@@ -26,16 +26,17 @@ Notes:
 
 #### SecondTask
 
-
-![](img/MergedSecond.png)
-
 #### SecondTask.Simple.addRandomNumber()
+
+![](img/randomsimple.png)
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | -------- 
-| 0: <span style="color:green">invokestatic</span> | 6: Math.random() | Inlining / DeadCodeElimination? | C2 | (ответ на вопрос #1) По идее здесь JIT должен увидеть dead code и как-то избавиться от вызова random(), но почему-то он не делает этого, хотя я пробовал значительно увеличить кол-во итераций (или это не видит Jitwatch?). 
+| 0: <span style="color:green">invokestatic</span> | 6: Math.random() | Inlining / DeadCodeElimination? | C2 | (ответ на вопрос #1) По идее здесь JIT должен увидеть dead code и как-то избавиться от вызова random(), но почему-то он не делает этого, хотя я пробовал значительно увеличить кол-во итераций (или это не видит Jitwatch?).
 
 #### SecondTask.SimpleWithLogging.addRandomNumber()
+
+![](img/randomwithlogs.png)
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | -------- 
@@ -43,6 +44,8 @@ Notes:
 | 28: <span style="color:red">invokevirtual</span> | printStream.println() | Inlining failure | C1 |  Код скомпилирован, но Inlining не удался, Callee is too large
 
 #### SecondTask.SecondTask.main()
+
+![](img/SecondTask.png)
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | -------- 
