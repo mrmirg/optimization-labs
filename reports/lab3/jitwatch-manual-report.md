@@ -10,7 +10,7 @@
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | -------- 
-|  3: <span style="color:blue">if_icmpge</span> | 9: for (...) | Trap, Deoptimization (?) | C2 | После С2 компиляции на основании профиля JIT видит, что branch-переходы не соответствуют ожиданиям, данный участок выполняется неоптимально, и к нему можно применить деоптимизацию и перекомпиляцию
+|  10: <span style="color:blue">if_icmpge</span> | 9: for (...) | Trap, Deoptimization (?) | C2 | После С2 компиляции на основании профиля JIT видит, что branch-переходы не соответствуют ожиданиям, данный участок выполняется неоптимально, и к нему можно применить деоптимизацию и перекомпиляцию
 | 18: <span style="color:green">invokevirtual</span> | 10: inner(i, j) | Inlining | C2 | (ответ на вопрос #1) JIT заменяет вызов функции на ее содержимое, тк видит, что фция выполняется много раз и имеет небольшой размер, экономим jump-командами и обращениями к стеку. Причем, при C1-компиляции оптимизация не применилась из-за большого размера байт кода фции (Jitwatch: callee is too large) 
 
 #### FirstTask.inner()
@@ -18,11 +18,11 @@
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | --------
-|  3: <span style="color:green">newarray</span> | 19: int[] parts = new int[2] | EscapeAnalysis, Inlining | C2 | JIT видит, что обьект parts[] не покидает своего scope, и компилирует код так, чтобы этот обьект (или всего лишь его значимые кусочки) аллоцировался в стек вместо heap 
+|  3: <span style="color:green">newarray</span> | 19: int[] parts = new int[2] | EscapeAnalysis, Inlining | C2 | JIT видит, что обьект parts[] создан внутри локального scope, не покидает его, и ни с кем не делится ссылкой на себя. Тогда JIT компилирует код так, чтобы этот обьект (или всего лишь его значимые кусочки) аллоцировался в стек вместо heap, что значительно быстрее и выгоднее для heap. Это также выполняется согласованно с Inlining, в рамках которого локальный scope метода должен слиться со scope вызывающего
 | 17: <span style="color:green">new</span> | 24: new Random() | EscapeAnalysis, Inlining | C2 | Аналогично с предыдущим. EscapeAnalysis производится только в режиме С2 
 | 21: <span style="color:green">invokespecial</span> | 24: new Random() | Inlining | C2 and C1 | Здесь производится inlining конструктора класса Random(), конструктор относится к тн SpecialMethods, поэтому invokespecial
 | 28: <span style="color:green">invokevirtual</span> | 26: random.nextBoolean() | Inlining |  C1 and C2 | Аналогично предыдущему
-| 21: <span style="color:blue">ifeq</span> | if (random.nextBoolean()) | Deoptimization (?) |  C1 and C2 | Аналогично случаю с <span style="color:blue">if_icmpge</span>
+| 31: <span style="color:blue">ifeq</span> | 26: if (random.nextBoolean()) | Deoptimization (?) |  C1 and C2 | Аналогично случаю с <span style="color:blue">if_icmpge</span>
 
 #### SecondTask
 
