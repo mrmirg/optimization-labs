@@ -1,5 +1,6 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
+jitwatch-ui-1.4.2-shaded-linux.jar
 
 ### STS ###
 .apt_generated

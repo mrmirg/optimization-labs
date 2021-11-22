@@ -13,22 +13,3 @@ public class SecondTask {
         }
     }
 }
-
-interface Adder {
-    void addARandomNumber(double value);
-}
-
-class Simple implements Adder {
-    @Override
-    public void addARandomNumber(double value) {
-        double random = Math.random();
-        double finalResult = random + value;//1. Что может здесь сделать JIT-компилятор?
-    }
-}
-
-class SimpleWithLogger implements Adder {
-    @Override
-    public void addARandomNumber(double value) {
-        System.out.println("The value is: " + Math.random() + value);
-    }
-}
