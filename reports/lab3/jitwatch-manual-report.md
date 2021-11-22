@@ -24,6 +24,8 @@
 | 28: <span style="color:green">invokevirtual</span> | 26: random.nextBoolean() | Inlining |  C1 and C2 | Аналогично предыдущему
 | 31: <span style="color:blue">ifeq</span> | 26: if (random.nextBoolean()) | Deoptimization (?) |  C1 and C2 | Аналогично случаю с <span style="color:blue">if_icmpge</span>
 
+В методе `FirstTask.inner()` мы возвращаем sum, тк иначе JIT может распознать вычисления в этом методе как dead code (особенно if else)
+
 #### SecondTask
 
 #### SecondTask.Simple.addRandomNumber()
@@ -49,5 +51,5 @@
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | -------- 
-| 2:, 5:, 11: <span style="color:blue">if_icmp, iload</span> | 5: for(...), 7: if (...), 25: new() | Deoptimization warnings | C2| Сообщения о том, что скомпилированный код выполняется в несоответствии с ожиданиями и может быть деоптимизирован/ перекомпилирован, причины - Uncommon traps: 1) JIT на основании профиля скомпилировал лишь 1 branch, а мы начали часто попадать в другой, как раз такая ситуация с нашим циклом (5: - 7:), 2) Мы вначале долго и часто пользуемся только классом Simple (и он заинлайнился), а класс SimpleWithLogger за это время удалился из compiled code cache, и при обращении к нему будет использоваться уже байт-код (пример деоптимизации)
-| 28: <span style="color:green">invokeinterface</span> | 12: adder.addRandomNumber() | Inlining, implementation prediction(?) | C2 | JIT видит, что вызов метода интерфейса осуществляется из под одного и того же класса (Simple), заменяет вызов интерфейса на вызов конкретного класса и инлайнит его
+| 2:, 5:, 11: <span style="color:blue">if_icmp, iload</span> | 5: for(...), 7: if (...), 25: new() | Deoptimization warnings | C2| Сообщения о том, что скомпилированный код выполняется в несоответствии с ожиданиями и может быть деоптимизирован/ перекомпилирован, причины - Uncommon traps: 1) JIT на основании профиля скомпилировал лишь 1 branch, а мы начали часто попадать в другой, как раз такая ситуация с нашим циклом (5: - 7:), 2) Мы вначале долго и часто пользуемся только классом Simple (он заинлайнился и теперь загружается в стек), а класс SimpleWithLogger за это время удалился из compiled code cache, и при обращении к нему будет использоваться уже байт-код (пример не очень удачной деоптимизации)
+| 28: <span style="color:green">invokeinterface</span> | 12: adder.addRandomNumber() | Inlining | C2 | JIT видит, что вызов метода интерфейса осуществляется из под одного и того же класса (Simple), заменяет вызов интерфейса на вызов конкретного класса и инлайнит его
