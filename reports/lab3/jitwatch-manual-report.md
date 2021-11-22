@@ -18,7 +18,7 @@
 
 | BCodeOp | RelativeSource | Optimization | Comp | Explanation & Reasons
 | -------- | ------------- | ------------ | ---- | --------
-|  3: <span style="color:green">newarray</span> | 19: int[] parts = new int[2] | EscapeAnalysis, Inlining | C2 | JIT видит, что обьект parts[] создан внутри локального scope, не покидает его, и ни с кем не делится ссылкой на себя. Тогда JIT компилирует код так, чтобы этот обьект (или всего лишь его значимые кусочки) аллоцировался в стек вместо heap, что значительно быстрее и выгоднее для heap. Это также выполняется согласованно с Inlining, в рамках которого локальный scope метода должен слиться со scope вызывающего
+|  3: <span style="color:green">newarray</span> | 19: int[] parts = new int[2] | EscapeAnalysis, Inlining | C2 | JIT видит, что обьект parts[] создан внутри локального scope, не покидает его, и может быть сразу удален GC после выполнения метода. Тогда JIT компилирует код так, чтобы этот обьект (или всего лишь его значимые кусочки) аллоцировался в стек вместо heap, что значительно быстрее и выгоднее для heap и GC. Это также выполняется согласованно с Inlining, в рамках которого локальный scope метода должен слиться со scope вызывающего
 | 17: <span style="color:green">new</span> | 24: new Random() | EscapeAnalysis, Inlining | C2 | Аналогично с предыдущим. EscapeAnalysis производится только в режиме С2 
 | 21: <span style="color:green">invokespecial</span> | 24: new Random() | Inlining | C2 and C1 | Здесь производится inlining конструктора класса Random(), конструктор относится к тн SpecialMethods, поэтому invokespecial
 | 28: <span style="color:green">invokevirtual</span> | 26: random.nextBoolean() | Inlining |  C1 and C2 | Аналогично предыдущему
